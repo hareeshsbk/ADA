@@ -787,3 +787,234 @@ Solution 2:
 ```
 
 These are the standard VTU/Anna University-style simplified C lab programs commonly accepted in practical exams.
+
+
+These questions are just **real-world wordings of the same DAA lab programs**. For exam/viva, identify the algorithm and write its complexity.
+
+| Q.No | Scenario                                      | Algorithm                          | Time Complexity                              |
+| ---- | --------------------------------------------- | ---------------------------------- | -------------------------------------------- |
+| 1    | Truck loading with partial items allowed      | Fractional Knapsack (Greedy)       | **O(n log n)**                               |
+| 2    | Episode release dependencies                  | Topological Sort                   | **O(V²)** (Adjacency Matrix)                 |
+| 3    | Divide, sort, merge sales data                | Merge Sort                         | **O(n log n)**                               |
+| 4    | Choose pivot, partition, recurse              | Quick Sort                         | Best/Average **O(n log n)**, Worst **O(n²)** |
+| 5    | Vehicle capacity 50 kg, select items          | 0/1 Knapsack (Dynamic Programming) | **O(nW)**                                    |
+| 6    | Connect substations at minimum cost           | Kruskal's MST                      | **O(E log E)**                               |
+| 7    | Shortest path between every pair of cities    | Floyd's Algorithm                  | **O(V³)**                                    |
+| 8    | Connect neighborhoods with minimum cable cost | Prim's MST (or MCST)               | **O(V²)**                                    |
+| 9    | Place N cameras without attacking             | N-Queens (Backtracking)            | **O(N!)**                                    |
+| 10   | Complete binary tree priority scheduling      | Heap Sort                          | **O(n log n)**                               |
+
+---
+
+# Short Viva Derivations
+
+## 1. Fractional Knapsack
+
+Main work is sorting items by profit/weight ratio.
+
+[
+O(n \log n)
+]
+
+Selecting items takes:
+
+[
+O(n)
+]
+
+Total:
+
+[
+O(n \log n)
+]
+
+---
+
+## 2. Topological Sort
+
+Using adjacency matrix:
+
+* Compute indegrees → O(V²)
+* Process vertices → O(V²)
+
+Total:
+
+[
+O(V^2)
+]
+
+---
+
+## 3. Merge Sort
+
+Recurrence:
+
+[
+T(n)=2T(n/2)+n
+]
+
+Master Theorem:
+
+[
+T(n)=O(n\log n)
+]
+
+---
+
+## 4. Quick Sort
+
+Average:
+
+[
+T(n)=2T(n/2)+n
+]
+
+[
+O(n\log n)
+]
+
+Worst case:
+
+[
+T(n)=T(n-1)+n
+]
+
+[
+O(n^2)
+]
+
+---
+
+## 5. 0/1 Knapsack
+
+DP table size:
+
+[
+(n+1)(W+1)
+]
+
+Each cell computed once.
+
+[
+O(nW)
+]
+
+For the given example:
+
+* n = 3
+* W = 50
+
+Operations ≈
+
+[
+3 \times 50 = 150
+]
+
+---
+
+## 6. Kruskal's Algorithm
+
+Sorting edges dominates.
+
+[
+O(E \log E)
+]
+
+Union-Find cost is comparatively smaller.
+
+---
+
+## 7. Floyd's Algorithm
+
+Three nested loops:
+
+```c
+for(k)
+ for(i)
+  for(j)
+```
+
+[
+O(V^3)
+]
+
+---
+
+## 8. Prim's Algorithm
+
+Using adjacency matrix:
+
+[
+O(V^2)
+]
+
+(Using Min Heap → O(E logV), but lab programs use matrix.)
+
+---
+
+## 9. N-Queens
+
+Choices reduce row by row:
+
+[
+N\times(N-1)\times(N-2)\cdots
+]
+
+[
+O(N!)
+]
+
+---
+
+## 10. Heap Sort
+
+Build Heap:
+
+[
+O(n)
+]
+
+Heapify repeatedly:
+
+[
+n\times O(\log n)
+]
+
+Total:
+
+[
+O(n\log n)
+]
+
+---
+
+# Maximum Marks Viva Table
+
+| Algorithm           | Best       | Average    | Worst      |
+| ------------------- | ---------- | ---------- | ---------- |
+| Merge Sort          | O(n log n) | O(n log n) | O(n log n) |
+| Quick Sort          | O(n log n) | O(n log n) | O(n²)      |
+| Heap Sort           | O(n log n) | O(n log n) | O(n log n) |
+| Fractional Knapsack | O(n log n) | O(n log n) | O(n log n) |
+| 0/1 Knapsack        | O(nW)      | O(nW)      | O(nW)      |
+| Floyd               | O(V³)      | O(V³)      | O(V³)      |
+| Topological Sort    | O(V²)      | O(V²)      | O(V²)      |
+| Prim                | O(V²)      | O(V²)      | O(V²)      |
+| Kruskal             | O(E log E) | O(E log E) | O(E log E) |
+| N-Queens            | O(N!)      | O(N!)      | O(N!)      |
+
+### Quick Identification Trick for Exams
+
+* **"Partial item allowed"** → Fractional Knapsack
+* **"Dependencies / prerequisite order"** → Topological Sort
+* **"Divide and Merge"** → Merge Sort
+* **"Pivot / Partition"** → Quick Sort
+* **"Capacity + choose complete items"** → 0/1 Knapsack
+* **"Minimum cable/network cost"** → Prim or Kruskal
+* **"Every pair shortest path"** → Floyd
+* **"One source shortest path"** → Dijkstra
+* **"Queens/Cameras on board"** → N-Queens
+* **"Binary Heap / Highest Priority First"** → Heap Sort
+
+These 10 are essentially rephrased versions of the same 12 lab programs you already have.
+
