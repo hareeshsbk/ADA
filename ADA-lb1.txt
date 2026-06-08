@@ -1098,3 +1098,642 @@ Here are the standard algorithms and algorithmic design paradigms used to solve 
  * **Explanation:** E-commerce platforms deal with large, dynamic inventories. An O(n \log n) sorting algorithm like Quick Sort is typically used for on-screen sorting filters (e.g., "Price: Low to High"). The lab requirement asks you to implement this and record its execution runtime variations based on dataset scale.
 
 
+
+
+
+
+[6/8, 10:52 AM] Ganesh N Bms: Q9. Airline Route Planner – Floyd Warshall Algorithm
+
+#include <stdio.h>
+
+int main() {
+    int n, dist[10][10];
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter adjacency matrix:\n");
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < n; j++)
+            scanf("%d", &dist[i][j]);
+
+    for(int k = 0; k < n; k++)
+        for(int i = 0; i < n; i++)
+            for(int j = 0; j < n; j++)
+                if(dist[i][k] + dist[k][j] < dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
+
+    printf("\nShortest Path Matrix:\n");
+
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++)
+            printf("%4d", dist[i][j]);
+        printf("\n");
+    }
+
+    return 0;
+}
+
+Time Complexity: O(V³)
+
+
+---
+
+Q10. Seating Arrangement Generator – Permutations
+
+#include <stdio.h>
+#include <string.h>
+
+void swap(char *a, char *b) {
+    char t = *a;
+    *a = *b;
+    *b = t;
+}
+
+void permute(char str[], int l, int r) {
+    if(l == r)
+        printf("%s\n", str);
+    else {
+        for(int i = l; i <= r; i++) {
+            swap(&str[l], &str[i]);
+            permute(str, l + 1, r);
+            swap(&str[l], &str[i]);
+        }
+    }
+}
+
+int main() {
+    char str[20];
+
+    printf("Enter string: ");
+    scanf("%s", str);
+
+    printf("Permutations are:\n");
+    permute(str, 0, strlen(str) - 1);
+
+    return 0;
+}
+
+Time Complexity: O(n!)
+
+
+---
+
+Q11. Railway Track Construction – Kruskal MST
+
+#include <stdio.h>
+
+int parent[20];
+
+int find(int i) {
+    while(parent[i])
+        i = parent[i];
+    return i;
+}
+
+int uni(int i, int j) {
+    if(i != j) {
+        parent[j] = i;
+        return 1;
+    }
+    return 0;
+}
+
+int main() {
+    int n, cost[20][20];
+    int mincost = 0, ne = 1;
+    int a, b, u, v, min;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter cost matrix:\n");
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < n; j++) {
+            scanf("%d", &cost[i][j]);
+            if(cost[i][j] == 0)
+                cost[i][j] = 999;
+        }
+
+    printf("\nEdges in MST:\n");
+
+    while(ne < n) {
+        min = 999;
+
+        for(int i = 0; i < n; i++)
+            for(int j = 0; j < n; j++)
+                if(cost[i][j] < min) {
+                    min = cost[i][j];
+                    a = u = i;
+                    b = v = j;
+                }
+
+        u = find(u);
+        v = find(v);
+
+        if(uni(u, v)) {
+            printf("%d Edge (%d,%d) = %d\n",
+                   ne++, a, b, min);
+            mincost += min;
+        }
+
+        cost[a][b] = cost[b][a] = 999;
+    }
+
+    printf("Minimum Cost = %d\n", mincost);
+
+    return 0;
+}
+
+Time Complexity: O(E log E)
+
+
+---
+
+Q12. E-Commerce Product Price Sorting – Quick Sort
+
+#include <stdio.h>
+
+void quicksort(int a[], int low, int high) {
+    int i = low, j = high;
+    int pivot = a[(low + high) / 2];
+
+    while(i <= j) {
+
+        while(a[i] < pivot)
+            i++;
+
+        while(a[j] > pivot)
+            j--;
+
+        if(i <= j) {
+            int temp = a[i];
+            a[i] = a[j];
+            a[j] = temp;
+            i++;
+            j--;
+        }
+    }
+
+    if(low < j)
+        quicksort(a, low, j);
+
+    if(i < high)
+        quicksort(a, i, high);
+}
+
+int main() {
+    int n, a[100];
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    printf("Enter elements:\n");
+    for(int i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    quicksort(a, 0, n - 1);
+
+    printf("Sorted Array:\n");
+    for(int i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    return 0;
+}
+
+Time Complexity: Average O(n log n), Worst O(n²)
+
+ADA Lab Cheat Sheet
+[6/8, 10:53 AM] Ganesh N Bms: Q5. Optical Fiber Network Design – Prim's MST
+
+#include <stdio.h>
+
+int main() {
+    int n, cost[10][10], visited[10] = {0};
+    int i, j, ne = 1, min, mincost = 0;
+    int a, b, u, v;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter cost matrix:\n");
+    for(i = 0; i < n; i++)
+        for(j = 0; j < n; j++) {
+            scanf("%d", &cost[i][j]);
+            if(cost[i][j] == 0)
+                cost[i][j] = 999;
+        }
+
+    visited[0] = 1;
+
+    printf("\nEdges in MST:\n");
+
+    while(ne < n) {
+        min = 999;
+
+        for(i = 0; i < n; i++) {
+            if(visited[i]) {
+                for(j = 0; j < n; j++) {
+                    if(!visited[j] && cost[i][j] < min) {
+                        min = cost[i][j];
+                        a = u = i;
+                        b = v = j;
+                    }
+                }
+            }
+        }
+
+        printf("%d Edge (%d,%d) = %d\n", ne++, a, b, min);
+        mincost += min;
+        visited[b] = 1;
+    }
+
+    printf("Minimum Cost = %d\n", mincost);
+
+    return 0;
+}
+
+
+---
+
+Q6. Course Scheduling System – Topological Sort
+
+#include <stdio.h>
+
+int main() {
+    int n, G[10][10], indeg[10] = {0};
+    int i, j, k;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter adjacency matrix:\n");
+    for(i = 0; i < n; i++)
+        for(j = 0; j < n; j++)
+            scanf("%d", &G[i][j]);
+
+    for(i = 0; i < n; i++)
+        for(j = 0; j < n; j++)
+            if(G[i][j])
+                indeg[j]++;
+
+    printf("Topological Order:\n");
+
+    for(k = 0; k < n; k++) {
+        for(i = 0; i < n; i++) {
+            if(indeg[i] == 0) {
+                printf("%d ", i);
+                indeg[i] = -1;
+
+                for(j = 0; j < n; j++)
+                    if(G[i][j])
+                        indeg[j]--;
+            }
+        }
+    }
+
+    return 0;
+}
+
+
+---
+
+Q7. Hospital Patient Priority – Heap Sort
+
+#include <stdio.h>
+
+void heapify(int a[], int n, int i) {
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+
+    if(l < n && a[l] > a[largest])
+        largest = l;
+
+    if(r < n && a[r] > a[largest])
+        largest = r;
+
+    if(largest != i) {
+        int temp = a[i];
+        a[i] = a[largest];
+        a[largest] = temp;
+
+        heapify(a, n, largest);
+    }
+}
+
+void heapSort(int a[], int n) {
+    for(int i = n/2 - 1; i >= 0; i--)
+        heapify(a, n, i);
+
+    for(int i = n-1; i >= 0; i--) {
+        int temp = a[0];
+        a[0] = a[i];
+        a[i] = temp;
+
+        heapify(a, i, 0);
+    }
+}
+
+int main() {
+    int a[100], n;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    printf("Enter elements:\n");
+    for(int i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    heapSort(a, n);
+
+    printf("Sorted Array:\n");
+    for(int i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    return 0;
+}
+
+
+---
+
+Q8. Security Camera Placement – N Queens
+
+#include <stdio.h>
+
+int x[20], count = 0;
+
+int place(int k, int i) {
+    for(int j = 1; j < k; j++) {
+        if(x[j] == i || abs(x[j] - i) == abs(j - k))
+            return 0;
+    }
+    return 1;
+}
+
+void nqueen(int k, int n) {
+    for(int i = 1; i <= n; i++) {
+        if(place(k, i)) {
+            x[k] = i;
+
+            if(k == n) {
+                count++;
+                printf("\nSolution %d:\n", count);
+
+                for(int r = 1; r <= n; r++) {
+                    for(int c = 1; c <= n; c++) {
+                        if(x[r] == c)
+                            printf("Q ");
+                        else
+                            printf(". ");
+                    }
+                    printf("\n");
+                }
+            }
+            else
+                nqueen(k + 1, n);
+        }
+    }
+}
+
+int main() {
+    int n;
+
+    printf("Enter number of queens: ");
+    scanf("%d", &n);
+
+    nqueen(1, n);
+
+    printf("\nTotal Solutions = %d\n", count);
+
+    return 0;
+}
+[6/8, 10:54 AM] Ganesh N Bms: Here are 4 complete C programs (Q1–Q4) that are commonly accepted in ADA lab exams.
+
+Q1. GPS Navigation System – Dijkstra's Algorithm
+
+#include <stdio.h>
+
+int main() {
+    int n, cost[10][10], dist[10], visited[10];
+    int i, j, count, mindist, nextnode, source;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter cost matrix:\n");
+    for(i=0;i<n;i++)
+        for(j=0;j<n;j++)
+            scanf("%d",&cost[i][j]);
+
+    printf("Enter source vertex: ");
+    scanf("%d",&source);
+
+    for(i=0;i<n;i++) {
+        dist[i]=cost[source][i];
+        visited[i]=0;
+    }
+
+    dist[source]=0;
+    visited[source]=1;
+    count=1;
+
+    while(count<n-1) {
+        mindist=999;
+
+        for(i=0;i<n;i++) {
+            if(dist[i]<mindist && !visited[i]) {
+                mindist=dist[i];
+                nextnode=i;
+            }
+        }
+
+        visited[nextnode]=1;
+
+        for(i=0;i<n;i++) {
+            if(!visited[i] &&
+               mindist+cost[nextnode][i] < dist[i])
+                dist[i]=mindist+cost[nextnode][i];
+        }
+        count++;
+    }
+
+    printf("\nShortest distances:\n");
+    for(i=0;i<n;i++)
+        printf("%d -> %d = %d\n",source,i,dist[i]);
+
+    return 0;
+}
+
+
+---
+
+Q2. Library Catalog – Merge Sort
+
+#include <stdio.h>
+
+void merge(int a[], int l, int m, int r) {
+    int i=l,j=m+1,k=0,b[100];
+
+    while(i<=m && j<=r)
+        b[k++]=(a[i]<a[j])?a[i++]:a[j++];
+
+    while(i<=m)
+        b[k++]=a[i++];
+
+    while(j<=r)
+        b[k++]=a[j++];
+
+    for(i=l,k=0;i<=r;i++,k++)
+        a[i]=b[k];
+}
+
+void mergesort(int a[], int l, int r) {
+    if(l<r) {
+        int m=(l+r)/2;
+        mergesort(a,l,m);
+        mergesort(a,m+1,r);
+        merge(a,l,m,r);
+    }
+}
+
+int main() {
+    int a[100],n,i;
+
+    printf("Enter number of elements: ");
+    scanf("%d",&n);
+
+    printf("Enter elements:\n");
+    for(i=0;i<n;i++)
+        scanf("%d",&a[i]);
+
+    mergesort(a,0,n-1);
+
+    printf("Sorted array:\n");
+    for(i=0;i<n;i++)
+        printf("%d ",a[i]);
+
+    return 0;
+}
+
+
+---
+
+Q3. Cargo Loading Optimization – Fractional Knapsack
+
+#include <stdio.h>
+
+struct Item {
+    int profit, weight;
+    float ratio;
+};
+
+int main() {
+    int n, capacity;
+    float totalProfit = 0;
+
+    printf("Enter number of items: ");
+    scanf("%d",&n);
+
+    struct Item item[n], temp;
+
+    for(int i=0;i<n;i++) {
+        printf("Profit and Weight: ");
+        scanf("%d%d",&item[i].profit,&item[i].weight);
+        item[i].ratio=(float)item[i].profit/item[i].weight;
+    }
+
+    printf("Enter capacity: ");
+    scanf("%d",&capacity);
+
+    for(int i=0;i<n-1;i++) {
+        for(int j=i+1;j<n;j++) {
+            if(item[i].ratio < item[j].ratio) {
+                temp=item[i];
+                item[i]=item[j];
+                item[j]=temp;
+            }
+        }
+    }
+
+    for(int i=0;i<n;i++) {
+        if(capacity >= item[i].weight) {
+            totalProfit += item[i].profit;
+            capacity -= item[i].weight;
+        }
+        else {
+            totalProfit += item[i].ratio * capacity;
+            break;
+        }
+    }
+
+    printf("Maximum Profit = %.2f\n", totalProfit);
+
+    return 0;
+}
+
+
+---
+
+Q4. Student Result Processing – Quick Sort
+
+#include <stdio.h>
+
+void quicksort(int a[], int low, int high) {
+    int i=low,j=high,pivot=a[low],temp;
+
+    if(low<high) {
+        while(i<j) {
+            while(a[i]<=pivot && i<high)
+                i++;
+
+            while(a[j]>pivot)
+                j--;
+
+            if(i<j) {
+                temp=a[i];
+                a[i]=a[j];
+                a[j]=temp;
+            }
+        }
+
+        temp=a[low];
+        a[low]=a[j];
+        a[j]=temp;
+
+        quicksort(a,low,j-1);
+        quicksort(a,j+1,high);
+    }
+}
+
+int main() {
+    int a[100],n,i;
+
+    printf("Enter number of elements: ");
+    scanf("%d",&n);
+
+    printf("Enter elements:\n");
+    for(i=0;i<n;i++)
+        scanf("%d",&a[i]);
+
+    quicksort(a,0,n-1);
+
+    printf("Sorted Array:\n");
+    for(i=0;i<n;i++)
+        printf("%d ",a[i]);
+
+    return 0;
+}
+
+Reply "next 5-8" and I'll send complete C programs for:
+
+Prim's MST
+
+Topological Sort
+
+Heap Sort
+
+N-Queen
+
+
+
