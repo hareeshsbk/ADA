@@ -1018,3 +1018,83 @@ O(n\log n)
 
 These 10 are essentially rephrased versions of the same 12 lab programs you already have.
 
+
+
+
+
+
+Here are the standard algorithms and algorithmic design paradigms used to solve each of the problems listed on your Analysis and Design of Algorithms (ADA) lab exam sheet.
+## 1. GPS Navigation System
+> **Problem:** Find the shortest path from a source location to all other locations.
+> 
+ * **Paradigm:** Greedy Method
+ * **Algorithm:** **Dijkstra’s Algorithm**
+ * **Explanation:** Since it requires finding the shortest path from a single source to all other nodes (locations) in a network with non-negative edge weights, Dijkstra's algorithm is the ideal choice. If the graph contains negative weights, **Bellman-Ford Algorithm** (Dynamic Programming) would be used instead.
+## 2. Library Book Catalog Organization
+> **Problem:** Arrange accession numbers in ascending order.
+> 
+ * **Paradigm:** Divide and Conquer (or Comparison-Based Sorting)
+ * **Algorithm:** **Merge Sort** or **Quick Sort**
+ * **Explanation:** Organizing a catalog requires an efficient sorting mechanism. Merge Sort offers a stable O(n \log n) time complexity, making it excellent for large data sets, while Quick Sort is highly efficient in practice with an average time complexity of O(n \log n).
+## 3. Cargo Loading Optimization
+> **Problem:** Maximize profit by selecting full or partial packages within a fixed capacity.
+> 
+ * **Paradigm:** Greedy Method
+ * **Algorithm:** **Fractional Knapsack Algorithm**
+ * **Explanation:** The key phrase here is **"partial packages"**. Because you are allowed to take fractions of an item to maximize profit within a capacity limit, a greedy approach (sorting items by their profit-to-weight ratio) yields the absolute optimal solution.
+## 4. Student Result Processing
+> **Problem:** Sort student marks efficiently and record the execution time for different input sizes.
+> 
+ * **Paradigm:** Divide and Conquer / Decrease and Conquer
+ * **Algorithm:** **Merge Sort**, **Quick Sort**, or **Heap Sort**
+ * **Explanation:** This is a classic lab experiment designed to analyze empirical time complexity. You typically implement a sorting algorithm (like Quick Sort or Merge Sort), generate random datasets of varying sizes (N = 1000, 5000, 10000), use system time functions to measure the execution time, and plot a graph to verify the theoretical O(n \log n) complexity.
+## 5. Optical Fiber Network Design
+> **Problem:** Connect all offices with minimum cable installation cost.
+> 
+ * **Paradigm:** Greedy Method
+ * **Algorithm:** **Prims’s Algorithm** or **Kruskal’s Algorithm**
+ * **Explanation:** Connecting all nodes in a network with the minimum possible total edge weight without creating any cycles is the definition of finding a **Minimum Spanning Tree (MST)**. Both Prim's and Kruskal's algorithms solve this efficiently.
+## 6. Course Scheduling System
+> **Problem:** Given courses and prerequisite relationships, determine a valid order in which all courses can be completed.
+> 
+ * **Paradigm:** Decrease and Conquer / Graph Traversal
+ * **Algorithm:** **Topological Sorting** (using Kahn's Algorithm or Depth-First Search)
+ * **Explanation:** Prerequisite constraints form a Directed Acyclic Graph (DAG). Topological sorting provides a linear ordering of vertices such that for every directed edge u \to v, node u comes before v in the ordering.
+## 7. Hospital Patient Priority Management
+> **Problem:** Sort patient severity scores and record execution time.
+> 
+ * **Paradigm:** Decrease and Conquer / Heap Structures
+ * **Algorithm:** **Heap Sort** (or utilizing a **Priority Queue**)
+ * **Explanation:** In hospital priority management, patients with higher severity scores must be treated first. A Max-Heap or Heap Sort is perfectly suited for managing priority elements dynamically. Like question 4, this involves tracking execution times across different inputs.
+## 8. Security Camera Placement
+> **Problem:** Place N cameras on an N \times N grid so that no two interfere.
+> 
+ * **Paradigm:** Backtracking
+ * **Algorithm:** **N-Queens Problem Algorithm**
+ * **Explanation:** This is a direct real-world adaptation of the classic N-Queens problem. You attempt to place a camera in a row, check for conflicts (horizontal, vertical, and diagonal interference), and if a conflict arises, you backtrack to the previous step and try a different position.
+## 9. Airline Route Planner
+> **Problem:** Determine the minimum travel cost between every pair of cities.
+> 
+ * **Paradigm:** Dynamic Programming
+ * **Algorithm:** **Floyd-Warshall Algorithm**
+ * **Explanation:** The problem asks for the minimum cost between **every pair** of cities, which means it requires an **All-Pairs Shortest Path** solution. The Floyd-Warshall algorithm computes this efficiently for a graph using a dynamic programming table in O(V^3) time complexity.
+## 10. Seating Arrangement Generator
+> **Problem:** Generate all possible seating arrangements of N guests exactly once.
+> 
+ * **Paradigm:** Brute Force / Backtracking
+ * **Algorithm:** **Permutation Generation Algorithm** (e.g., Steinhaus–Johnson–Trotter algorithm or simple recursive backtracking)
+ * **Explanation:** Finding all possible unique arrangements of N items means generating all N! permutations of a set. A recursive backtracking approach is typically used to swap elements and generate each configuration systematically.
+## 11. Railway Track Construction
+> **Problem:** Connect towns with minimum track construction cost.
+> 
+ * **Paradigm:** Greedy Method
+ * **Algorithm:** **Kruskal’s Algorithm** or **Prim’s Algorithm**
+ * **Explanation:** Similar to Question 5, this is another classic application of the **Minimum Spanning Tree (MST)**. You treat towns as vertices and potential railway tracks as weighted edges, then find the tree that spans all vertices with the minimum total cost.
+## 12. E-Commerce Product Price Sorting
+> **Problem:** Sort product prices efficiently and measure execution time.
+> 
+ * **Paradigm:** Divide and Conquer
+ * **Algorithm:** **Quick Sort** or **Merge Sort**
+ * **Explanation:** E-commerce platforms deal with large, dynamic inventories. An O(n \log n) sorting algorithm like Quick Sort is typically used for on-screen sorting filters (e.g., "Price: Low to High"). The lab requirement asks you to implement this and record its execution runtime variations based on dataset scale.
+
+
