@@ -1,0 +1,596 @@
+Here are the identified algorithms, clean and simple C lab programs, and their time complexities for each of your scenarios.
+## 1. Fractional Knapsack Problem
+### Identified Algorithm
+ * **Technique:** Greedy Approach (**Fractional Knapsack Algorithm**)
+ * Items are sorted in descending order of their profit-to-weight ratio to maximize the objective function.
+### C Program
+```c
+#include <stdio.h>
+
+struct Item {
+    int id;
+    int weight;
+    int value;
+    double ratio;
+};
+
+void fractionalKnapsack(int n, struct Item items[], int capacity) {
+    int i, j;
+    struct Item temp;
+
+    // Bubble sort items based on value/weight ratio in descending order
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (items[j].ratio < items[j + 1].ratio) {
+                temp = items[j];
+                items[j] = items[j + 1];
+                items[j + 1] = temp;
+            }
+        }
+    }
+
+    double totalProfit = 0.0;
+    printf("\n--- Loading Strategy ---\n");
+    for (i = 0; i < n; i++) {
+        if (capacity >= items[i].weight) {
+            capacity -= items[i].weight;
+            totalProfit += items[i].value;
+            printf("Item %d: Fully loaded (Weight: %d, Profit: %d)\n", items[i].id, items[i].weight, items[i].value);
+        } else {
+            double fraction = (double)capacity / items[i].weight;
+            totalProfit += items[i].value * fraction;
+            printf("Item %d: Partially loaded (Weight taken: %d/%d, Profit: %.2f)\n", items[i].id, capacity, items[i].weight, items[i].value * fraction);
+            break; 
+        }
+    }
+    printf("\nMaximum total profit obtained: %.2f\n", totalProfit);
+}
+
+int main() {
+    int n, capacity, i;
+    struct Item items[10];
+
+    printf("Enter number of items: ");
+    scanf("%d", &n);
+    printf("Enter truck carrying capacity: ");
+    scanf("%d", &capacity);
+
+    for (i = 0; i < n; i++) {
+        items[i].id = i + 1;
+        printf("Enter weight and value of item %d: ", i + 1);
+        scanf("%d %d", &items[i].weight, &items[i].value);
+        items[i].ratio = (double)items[i].value / items[i].weight;
+    }
+
+    fractionalKnapsack(n, items, capacity);
+    return 0;
+}
+
+```
+### Time Complexity
+ * **Best/Worst/Average Case:** O(N \log N) when using an efficient sorting algorithm like Quick Sort or Merge Sort. Using a simple Bubble Sort yields O(N^2).
+## 2. Web Series Schedule Constraints
+### Identified Algorithm
+ * **Technique:** Graph Theory (**Topological Sorting via Kahn's Algorithm / Indegree Method**)
+ * Used on a Directed Acyclic Graph (DAG) where nodes represent episodes and directed edges represent release order dependencies.
+### C Program
+```c
+#include <stdio.h>
+#define MAX 50
+
+void topologicalSort(int adj[MAX][MAX], int v) {
+    int indegree[MAX] = {0}, queue[MAX], order[MAX];
+    int front = 0, rear = 0, k = 0, i, j;
+
+    // Compute incoming edges (indegree) for each node
+    for (i = 0; i < v; i++) {
+        for (j = 0; j < v; j++) {
+            if (adj[i][j] == 1)
+                indegree[j]++;
+        }
+    }
+
+    // Enqueue episodes with zero incoming dependencies
+    for (i = 0; i < v; i++) {
+        if (indegree[i] == 0)
+            queue[rear++] = i;
+    }
+
+    while (front < rear) {
+        int current = queue[front++];
+        order[k++] = current;
+
+        for (i = 0; i < v; i++) {
+            if (adj[current][i] == 1) {
+                indegree[i]--;
+                if (indegree[i] == 0)
+                    queue[rear++] = i;
+            }
+        }
+    }
+
+    if (k != v) {
+        printf("\nError: Dependency cycle detected! A valid sequence is impossible.\n");
+    } else {
+        printf("\nValid Episode Release Sequence: ");
+        for (i = 0; i < v; i++)
+            printf("%d ", order[i]);
+        printf("\n");
+    }
+}
+
+int main() {
+    int v, i, j, adj[MAX][MAX];
+    printf("Enter number of episodes/vertices: ");
+    scanf("%d", &v);
+
+    printf("Enter adjacency matrix (1 if i must be released before j, else 0):\n");
+    for (i = 0; i < v; i++)
+        for (j = 0; j < v; j++)
+            scanf("%d", &adj[i][j]);
+
+    topologicalSort(adj, v);
+    return 0;
+}
+
+```
+### Time Complexity
+ * **Worst Case:** O(V + E) where V is vertices (episodes) and E is edges (dependencies) when implemented using adjacency lists. (Using an adjacency matrix takes O(V^2)).
+## 3. Retail Daily Sales Processing
+### Identified Algorithm
+ * **Technique:** Divide and Conquer (**Merge Sort**)
+ * The array is recursively broken down into halves, sorted individually, and combined.
+### C Program
+```c
+#include <stdio.h>
+#include <time.h>
+
+void merge(int a[], int low, int mid, int high) {
+    int b[100];
+    int i = low, j = mid + 1, k = low;
+    
+    while (i <= mid && j <= high) {
+        if (a[i] <= a[j]) b[k++] = a[i++];
+        else b[k++] = a[j++];
+    }
+    while (i <= mid) b[k++] = a[i++];
+    while (j <= high) b[k++] = a[j++];
+    
+    for (i = low; i <= high; i++) a[i] = b[i];
+}
+
+void mergeSort(int a[], int low, int high) {
+    if (low < high) {
+        int mid = (low + high) / 2;
+        mergeSort(a, low, mid);
+        mergeSort(a, mid + 1, high);
+        merge(a, low, mid, high);
+    }
+}
+
+int main() {
+    int A[] = {45, 12, 78, 34, 23, 89, 56, 11};
+    int n = sizeof(A) / sizeof(A[0]);
+
+    clock_t start = clock();
+    mergeSort(A, 0, n - 1);
+    clock_t end = clock();
+
+    printf("Sorted Sales Array: ");
+    for (int i = 0; i < n; i++) printf("%d ", A[i]);
+    
+    double time_taken = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("\nTime taken for calculation: %f seconds\n", time_taken);
+    return 0;
+}
+
+```
+### Time Complexity
+ * **Best/Worst/Average Case:** O(N \log N)
+## 4. Package Delivery Analysis
+### Identified Algorithm
+ * **Technique:** Divide and Conquer (**Quick Sort**)
+ * Uses a reference element called a **pivot** to partition the array elements dynamically.
+### C Program
+```c
+#include <stdio.h>
+#include <time.h>
+
+void swap(int *a, int *b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+int partition(int a[], int low, int high) {
+    int pivot = a[high]; // Last element as reference point
+    int i = (low - 1);
+    
+    for (int j = low; j < high; j++) {
+        if (a[j] < pivot) {
+            i++;
+            swap(&a[i], &a[j]);
+        }
+    }
+    swap(&a[i + 1], &a[high]);
+    return (i + 1);
+}
+
+void quickSort(int a[], int low, int high) {
+    if (low < high) {
+        int pi = partition(a, low, high);
+        quickSort(a, low, pi - 1);
+        quickSort(a, pi + 1, high);
+    }
+}
+
+int main() {
+    int A[] = {42, 17, 8, 91, 35, 64, 23, 56};
+    int n = sizeof(A) / sizeof(A[0]);
+
+    clock_t start = clock();
+    quickSort(A, 0, n - 1);
+    clock_t end = clock();
+
+    printf("Sorted Delivery Times Array: ");
+    for (int i = 0; i < n; i++) printf("%d ", A[i]);
+
+    double time_taken = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("\nTime taken for calculation: %f seconds\n", time_taken);
+    return 0;
+}
+
+```
+### Time Complexity
+ * **Best/Average Case:** O(N \log N)
+ * **Worst Case:** O(N^2) (Happens when the input array is already sorted or reverse-sorted).
+## 5. Disaster Relief Rescue Vehicle
+### Identified Algorithm
+ * **Technique:** Dynamic Programming (**0/1 Knapsack Problem**)
+ * Items cannot be split; we must form global optimal values from solutions to sub-problems.
+### C Program
+```c
+#include <stdio.h>
+
+int max(int a, int b) { return (a > b) ? a : b; }
+
+void solveKnapsack() {
+    char items[] = {'A', 'B', 'C'};
+    int wt[] = {10, 20, 30};
+    int val[] = {60, 100, 120};
+    int W = 50;
+    int n = 3;
+    int K[4][51];
+    int i, w;
+
+    for (i = 0; i <= n; i++) {
+        for (w = 0; w <= W; w++) {
+            if (i == 0 || w == 0)
+                K[i][w] = 0;
+            else if (wt[i - 1] <= w)
+                K[i][w] = max(val[i - 1] + K[i - 1][w - wt[i - 1]], K[i - 1][w]);
+            else
+                K[i][w] = K[i - 1][w];
+        }
+    }
+
+    printf("Maximum value that can be obtained: %d\n", K[n][W]);
+
+    printf("Items selected for transportation: ");
+    w = W;
+    for (i = n; i > 0 && w > 0; i--) {
+        if (K[i][w] != K[i - 1][w]) {
+            printf("%c ", items[i - 1]);
+            w = w - wt[i - 1];
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    solveKnapsack();
+    return 0;
+}
+
+```
+### Time Complexity
+ * **Worst Case:** O(N \times W) where N is the number of supplies and W is the maximum vehicle capacity.
+## 6. Power Grid Substation Connections
+### Identified Algorithm
+ * **Technique:** Greedy Edge Selection (**Kruskal's Algorithm**)
+ * Finds a Minimum Cost Spanning Tree (MST) by processing sorted edge weights while avoiding cycles.
+### C Program
+```c
+#include <stdio.h>
+#define INF 999
+#define MAX 10
+
+int parent[MAX];
+
+int find(int i) {
+    while (parent[i])
+        i = parent[i];
+    return i;
+}
+
+int unionSets(int i, int j) {
+    if (i != j) {
+        parent[j] = i;
+        return 1;
+    }
+    return 0;
+}
+
+int main() {
+    int cost[MAX][MAX], n, i, j, min, u, v, a, b, ne = 1, mincost = 0;
+
+    printf("Enter number of substations: ");
+    scanf("%d", &n);
+
+    printf("Enter cost adjacency matrix (Use 999 for infinity/no connection):\n");
+    for (i = 1; i <= n; i++) {
+        for (j = 1; j <= n; j++) {
+            scanf("%d", &cost[i][j]);
+        }
+        parent[i] = 0;
+    }
+
+    printf("\nEdges selected for Minimum Cost Spanning Tree:\n");
+    while (ne < n) {
+        for (i = 1, min = INF; i <= n; i++) {
+            for (j = 1; j <= n; j++) {
+                if (cost[i][j] < min) {
+                    min = cost[i][j];
+                    a = u = i;
+                    b = v = j;
+                }
+            }
+        }
+
+        u = find(u);
+        v = find(v);
+
+        if (unionSets(u, v)) {
+            printf("Connection %d: Substation (%d -> %d) Cost: %d\n", ne++, a, b, min);
+            mincost += min;
+        }
+        cost[a][b] = cost[b][a] = INF;
+    }
+    printf("Total Minimum Installation Cost: %d\n", mincost);
+    return 0;
+}
+
+```
+### Time Complexity
+ * **Worst Case:** O(E \log E) or O(E \log V) where E is the number of connection edges and V is substations.
+## 7. Shortest Path Between Every Pair of Cities
+### Identified Algorithm
+ * **Technique:** Dynamic Programming (**Floyd-Warshall Algorithm**)
+ * Computes all-pairs shortest paths using an iterative relaxation technique across all city combinations.
+### C Program
+```c
+#include <stdio.h>
+#define INF 999
+#define MAX 10
+
+void floydWarshall(int graph[MAX][MAX], int v) {
+    int dist[MAX][MAX], i, j, k;
+
+    for (i = 0; i < v; i++)
+        for (j = 0; j < v; j++)
+            dist[i][j] = graph[i][j];
+
+    for (k = 0; k < v; k++) {
+        for (i = 0; i < v; i++) {
+            for (j = 0; j < v; j++) {
+                if (dist[i][k] + dist[k][j] < dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
+            }
+        }
+    }
+
+    printf("\nShortest distance matrix between every pair of cities:\n");
+    for (i = 0; i < v; i++) {
+        for (j = 0; j < v; j++) {
+            if (dist[i][j] == INF)
+                printf("%7s", "INF");
+            else
+                printf("%7d", dist[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int v, i, j, graph[MAX][MAX];
+    printf("Enter number of cities: ");
+    scanf("%d", &v);
+
+    printf("Enter graph matrix (Use 999 for infinity/no direct road):\n");
+    for (i = 0; i < v; i++)
+        for (j = 0; j < v; j++)
+            scanf("%d", &graph[i][j]);
+
+    floydWarshall(graph, v);
+    return 0;
+}
+
+```
+### Time Complexity
+ * **Worst/Best/Average Case:** O(V^3) where V is the number of cities.
+## 8. Neighborhood Cable Installation Cost Optimization
+### Identified Algorithm
+ * **Technique:** Greedy Vertex-Based Growing (**Prim's Algorithm**)
+ * An alternative standard Minimum Cost Spanning Tree method that grows step-by-step from an initial single root neighborhood vertex.
+### C Program
+```c
+#include <stdio.h>
+#define INF 999
+#define MAX 10
+
+void prims(int cost[MAX][MAX], int n) {
+    int visited[MAX] = {0}, i, j, ne = 1, min, a, b, u, v, mincost = 0;
+
+    visited[1] = 1; // Begin exploration tree from first node
+    printf("\nEdges selected in the Spanning Tree:\n");
+
+    while (ne < n) {
+        for (i = 1, min = INF; i <= n; i++) {
+            for (j = 1; j <= n; j++) {
+                if (cost[i][j] < min && visited[i] != 0) {
+                    min = cost[i][j];
+                    a = u = i;
+                    b = v = j;
+                }
+            }
+        }
+
+        if (visited[v] == 0) {
+            printf("Cable Line %d: Neighborhood (%d -> %d) Cost: %d\n", ne++, a, b, min);
+            mincost += min;
+            visited[v] = 1;
+        }
+        cost[a][b] = cost[b][a] = INF;
+    }
+    printf("Total Minimum Cable Layout Cost: %d\n", mincost);
+}
+
+int main() {
+    int cost[MAX][MAX], n, i, j;
+    printf("Enter number of neighborhoods: ");
+    scanf("%d", &n);
+
+    printf("Enter graph weight matrix (Use 999 for infinity):\n");
+    for (i = 1; i <= n; i++)
+        for (j = 1; j <= n; j++)
+            scanf("%d", &cost[i][j]);
+
+    prims(cost, n);
+    return 0;
+}
+
+```
+### Time Complexity
+ * **Worst Case:** O(V^2) when implemented using an adjacency matrix.
+## 9. Surveillance Camera Positioning
+### Identified Algorithm
+ * **Technique:** Depth-First Search Exploration with State Discarding (**Backtracking / N-Queens Problem**)
+ * Systematically explores viable camera placements across rows, rolling back whenever constraints fail.
+### C Program
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#define MAX 10
+
+int board[MAX][MAX];
+
+void printSolution(int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (board[i][j]) printf(" [C] ");
+            else printf("  .  ");
+        }
+        printf("\n");
+    }
+}
+
+bool isSafe(int row, int col, int n) {
+    int i, j;
+    for (i = 0; i < col; i++)
+        if (board[row][i]) return false;
+
+    for (i = row, j = col; i >= 0 && j >= 0; i--, j--)
+        if (board[i][j]) return false;
+
+    for (i = row, j = col; j >= 0 && i < n; i++, j--)
+        if (board[i][j]) return false;
+
+    return true;
+}
+
+bool solveNQueens(int col, int n) {
+    if (col >= n) return true;
+
+    for (int i = 0; i < n; i++) {
+        if (isSafe(i, col, n)) {
+            board[i][col] = 1;
+            if (solveNQueens(col + 1, n)) return true;
+            board[i][col] = 0; // Backtrack
+        }
+    }
+    return false;
+}
+
+int main() {
+    int n;
+    printf("Enter the number of Surveillance Cameras (N): ");
+    scanf("%d", &n);
+
+    if (solveNQueens(0, n)) {
+        printf("\nValid Arrangement Vector:\n");
+        printSolution(n);
+    } else {
+        printf("\nNo valid camera deployment setup found.\n");
+    }
+    return 0;
+}
+
+```
+### Time Complexity
+ * **Worst Case:** O(N!)
+## 10. Emergency Room Patient Sorting
+### Identified Algorithm
+ * **Technique:** Binary Tree Structures Representation (**Heap Sort**)
+ * The array gets structured visually into a Complete Binary Tree (Max-Heap properties), extracting the largest value index recursively.
+### C Program
+```c
+#include <stdio.h>
+#include <time.h>
+
+void heapify(int arr[], int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && arr[left] > arr[largest]) largest = left;
+    if (right < n && arr[right] > arr[largest]) largest = right;
+
+    if (largest != i) {
+        int temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(int arr[], int n) {
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+
+    for (int i = n - 1; i > 0; i--) {
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+        heapify(arr, i, 0);
+    }
+}
+
+int main() {
+    int A[] = {35, 82, 17, 94, 26, 58, 71, 43};
+    int n = sizeof(A) / sizeof(A[0]);
+
+    clock_t start = clock();
+    heapSort(A, n);
+    clock_t end = clock();
+
+    printf("Sorted Order of Patient Priorities: ");
+    for (int i = 0; i < n; i++) printf("%d ", A[i]);
+
+    double time_taken = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("\nTime taken for calculation: %f seconds\n", time_taken);
+    return 0;
+}
+
+```
+### Time Complexity
+ * **Best/Worst/Average Case:** O(N \log N)
